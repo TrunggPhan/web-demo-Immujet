@@ -66,7 +66,7 @@
         </ul>
       </div>
       <div class="right-content">
-        <h1 class="product-title">aaaaa</h1>
+        <h1 class="product-title">Home Salon™ - Polygel Nail Master Kit</h1>
         <div class="product-evaluation">
           <div class="star-evaluation">
             <i v-for="item in 5" :key="item" class="fa fa-star" aria-hidden="true"></i>
