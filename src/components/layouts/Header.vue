@@ -1,15 +1,20 @@
 <template>
   <div>
     <div class="background-header">
-      <img src="../../assets/images/background-header.jpg" class="img-fluid displayoff" v-if="true"/>
-      <div class="background-head-gradient displayoff" v-if="true" ></div>
+      <img src="../../assets/images/background-header.jpg" class="img-fluid displayoff" v-if="true" />
+      <div class="background-head-gradient displayoff" v-if="true"></div>
       <div class="header-content">
         <a href class="annoucement-bar">
           <p class="title-sale">SPRING SALES UP TO 50% OFF! (LIMITED TIME OFFER)</p>
         </a>
         <div class="container">
           <div class="bars-icon">
-            <i class="fa fa-bars fa-2x" aria-hidden="true" @click="checkNavbarLeft = !checkNavbarLeft" v-if="checkNavbarLeft"></i>
+            <i
+              class="fa fa-bars fa-2x"
+              aria-hidden="true"
+              @click="checkNavbarLeft = !checkNavbarLeft"
+              v-if="checkNavbarLeft"
+            ></i>
             <div class="navbar-left" v-if="!checkNavbarLeft">
               <div class="input-group input-search">
                 <input
@@ -26,7 +31,13 @@
               </div>
               <div class="menu-bar">
                 <ul>
-                  <li class="header-bar">Home</li>
+                  <router-link 
+                    tag="li" 
+                    to="/" 
+                    class="header-bar" 
+                    style="cursor: pointer;"
+                  >Home
+                  </router-link>
                   <li class="header-bar">Catalog</li>
                   <li class="header-bar">Track Your Order</li>
                   <li class="footer-bar">ImmuJet.com</li>
@@ -44,12 +55,9 @@
           </div>
           <div class="nav-bar" @click="checkNavbarLeft = true">
             <ul>
-              <router-link
-                tag="li"
-                to="/" 
-                class=""
-                style="cursor: pointer;"
-                ><a href="#" @click="handleDisplayBGImg()">HOME</a></router-link>
+              <router-link tag="li" to="/" class style="cursor: pointer;">
+                <a href="#">HOME</a>
+              </router-link>
               <li>
                 <a href="#">CATALOG</a>
               </li>
@@ -81,28 +89,27 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapActions } from 'vuex';
+import { mapGetters, mapMutations, mapActions } from "vuex";
 
 export default {
-  data () {
+  data() {
     return {
       checkNavbarLeft: true,
-      bgImgOn: true,
-    }
+      bgImgOn: true
+    };
   },
-  props: {
-
-  },
+  props: {},
   methods: {
-    ...mapActions (["setImgHeaderFlag"]),
+    ...mapActions(["setImgHeaderFlag"]),
     handleDisplayBGImg() {
       this.setImgHeaderFlag(false);
-      document.getElementsByClassName("header-content")[0].style.position = 'relative';
+      document.getElementsByClassName("header-content")[0].style.position =
+        "relative";
     }
   },
   computed: {
-    ...mapGetters (["getImgHeaderFlag"]),
-  },
+    ...mapGetters(["getImgHeaderFlag"])
+  }
 };
 </script>
 
@@ -149,26 +156,26 @@ export default {
   .bars-icon .navbar-left {
     padding: 10px 10px;
     background-color: #1f2021;
-    font-family: 'Arapey',serif;
+    font-family: "Arapey", serif;
     height: 100%;
     border-right: 2px solid #a56600;
   }
-  .bars-icon .navbar-left .input-search input{
+  .bars-icon .navbar-left .input-search input {
     font-style: italic !important;
   }
-   .bars-icon .navbar-left .menu-bar {
-     text-align: left;
-     margin-top: 15px;
-   }
-   .bars-icon .navbar-left .menu-bar .header-bar {
-     color: #ffffff;
-     font-size: 22px;
-     margin-bottom: 30px;
-   }
-   .bars-icon .navbar-left .menu-bar .footer-bar {
-     color: #bfbfbf;
-     margin-bottom: 15px;
-   }
+  .bars-icon .navbar-left .menu-bar {
+    text-align: left;
+    margin-top: 15px;
+  }
+  .bars-icon .navbar-left .menu-bar .header-bar {
+    color: #ffffff;
+    font-size: 22px;
+    margin-bottom: 30px;
+  }
+  .bars-icon .navbar-left .menu-bar .footer-bar {
+    color: #bfbfbf;
+    margin-bottom: 15px;
+  }
   /* ------ END bar-icon -------*/
   .container {
     display: grid;
@@ -193,7 +200,7 @@ export default {
   }
 }
 
- @media only screen and (max-width: 736px) {
+@media only screen and (max-width: 736px) {
   .background-header {
     position: none;
     text-align: none;
@@ -235,26 +242,26 @@ export default {
   .bars-icon .navbar-left {
     padding: 10px 10px;
     background-color: #1f2021;
-    font-family: 'Arapey',serif;
+    font-family: "Arapey", serif;
     height: 100%;
     border-right: 2px solid #a56600;
   }
-  .bars-icon .navbar-left .input-search input{
+  .bars-icon .navbar-left .input-search input {
     font-style: italic !important;
   }
-   .bars-icon .navbar-left .menu-bar {
-     text-align: left;
-     margin-top: 15px;
-   }
-   .bars-icon .navbar-left .menu-bar .header-bar {
-     color: #ffffff;
-     font-size: 22px;
-     margin-bottom: 30px;
-   }
-   .bars-icon .navbar-left .menu-bar .footer-bar {
-     color: #bfbfbf;
-     margin-bottom: 15px;
-   }
+  .bars-icon .navbar-left .menu-bar {
+    text-align: left;
+    margin-top: 15px;
+  }
+  .bars-icon .navbar-left .menu-bar .header-bar {
+    color: #ffffff;
+    font-size: 22px;
+    margin-bottom: 30px;
+  }
+  .bars-icon .navbar-left .menu-bar .footer-bar {
+    color: #bfbfbf;
+    margin-bottom: 15px;
+  }
   /* ------ END bar-icon -------*/
   .container {
     display: grid;

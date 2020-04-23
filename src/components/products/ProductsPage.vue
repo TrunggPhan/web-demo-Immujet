@@ -46,7 +46,7 @@
       <div class="left-content">
         <ul>
           <li>
-            <img src="../../assets/images/product1.jpg" alt />
+            <img src="../../assets/images/product8.jpg" alt />
           </li>
           <li>
             <img src="../../assets/images/product2.jpg" alt />
@@ -66,7 +66,7 @@
         </ul>
       </div>
       <div class="right-content">
-        <h1 class="product-title">Home Salon™ - Polygel Nail Master Kit</h1>
+        <h1 class="product-title">{{getDataAttributes.title}}</h1>
         <div class="product-evaluation">
           <div class="star-evaluation">
             <i v-for="item in 5" :key="item" class="fa fa-star" aria-hidden="true"></i>
@@ -75,18 +75,18 @@
         </div>
         <div class="product-price">
           <div>
-            <span class="old-price">1.877.836,95 VND</span>
-            <span class="new-price">1.642.959,95 VND</span>
+            <span class="old-price">{{getOriginPrice}}$</span>
+            <span class="new-price">{{getSalePrice}}$</span>
           </div>
         </div>
         <div class="hr-large"></div>
         <div class="product-size-title">Size</div>
         <div class="product-size">
           <div class="product-choose-size">
-            <button class="button-size size-s" @click="getdata()">S</button>
-            <button class="button-size size-m">M</button>
-            <button class="button-size size-l">L</button>
-            <button class="button-size size-xl">XL</button>
+            <a class="button-size size-s" :class="{active: checkActive == 1 }" @click="chooseSizeS()"><b>S</b></a>
+            <a class="button-size size-m" :class="{active: checkActive == 2}"  @click="chooseSizeM()"><b>M</b></a>
+            <a class="button-size size-l" :class="{active: checkActive == 3}" @click="chooseSizeL()"><b>L</b></a>
+            <a class="button-size size-xl" :class="{active: checkActive == 4}" @click="chooseSizeXL()"><b>XL</b></a>
           </div>
         </div>
         <div class="product-name">
@@ -101,7 +101,7 @@
             class="form-control"
             aria-label="Small"
             aria-describedby="inputGroup-sizing-sm"
-            value="1"
+            v-model="quantity"
           />
         </div>
         <router-link tag="button" to="/product/01/cart" class="btn addcart btn-block">ADD TO CART</router-link>
@@ -482,21 +482,68 @@
 <script>
 import Product from "./Product";
 import PageAverage from "./Average";
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 export default {
-  data() {
-    return {
-      productInfo: {}
-    };
-  },
-  methods: {
-    getdata() {
-      console.log("this product= ", this.productInfo)
-    },
-  },
   components: {
     Product,
     PageAverage
+  },
+  data() {
+    return {
+      quantity: 1,
+      checkActive: 1,
+    };
+  },
+  methods: {
+    ...mapMutations(["setPrice"]),
+    chooseSizeS() {
+      this.checkActive = 1;
+      let originSale = {
+        origin: this.getDataVariant[0].attributes.compare_at_price,
+        sale: this.getDataVariant[0].attributes.price
+      }
+      this.setPrice(originSale);
+    },
+    chooseSizeM() {
+      this.checkActive = 2;
+      let originSale = {
+        origin: this.getDataVariant[1].attributes.compare_at_price,
+        sale: this.getDataVariant[1].attributes.price
+      }
+      this.setPrice(originSale);
+    },
+    chooseSizeL() {
+      this.checkActive = 3;
+      let originSale = {
+        origin: this.getDataVariant[2].attributes.compare_at_price,
+        sale: this.getDataVariant[2].attributes.price
+      }
+      this.setPrice(originSale);
+    },
+    chooseSizeXL() {
+      this.checkActive = 4;
+      let originSale = {
+        origin: this.getDataVariant[3].attributes.compare_at_price,
+        sale: this.getDataVariant[3].attributes.price
+      }
+      this.setPrice(originSale);
+    },
+  },
+  computed: {
+    ...mapGetters([
+      "getDataAttributes",
+      "getDataVariant",
+      "getOriginPrice",
+      "getSalePrice"
+    ]),
+  },
+  watch: {
+    originPrice: () => {
+      this.getOriginPrice;
+    },
+    salePrice: () => {
+      this.salePrice;
+    }
   }
 };
 </script>
@@ -667,10 +714,16 @@ export default {
   padding: 3px 3px;
   border: 1px solid #ffffff;
   background-color: #ffffff;
+  cursor: pointer;
 }
-.container .right-content .product-choose-size .button-size:focus {
+/* .container .right-content .product-choose-size .button-size:focus {
   background-color: #f3f3f3;
   border: 1px solid #111111;
+  outline: none;
+} */
+.active {
+  background-color: #f3f3f3 !important;
+  border: 1px solid #111111 !important;
   outline: none;
 }
 .container .right-content .product-name {
