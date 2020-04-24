@@ -55,6 +55,22 @@ export const store = new Vuex.Store({
         setImgHeaderFlag ({commit}, flag) {
             commit('setImgHeaderFlag', flag)
         },
+        postDataCart ({commit},data ) {
+            axios.post('/cart', {
+                method: 'post',
+                url: 'https://homentic.com/api/carts',
+                data: {
+                    data : {
+                        type: 'carts'
+                    }
+                }
+
+              }).then(function (response) {
+                    console.log(response);
+        })
+        }
+
+
 
     }
 })

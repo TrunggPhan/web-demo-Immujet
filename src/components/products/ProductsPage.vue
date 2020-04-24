@@ -83,10 +83,34 @@
         <div class="product-size-title">Size</div>
         <div class="product-size">
           <div class="product-choose-size">
-            <a class="button-size size-s" :class="{active: checkActive == 1 }" @click="chooseSizeS()"><b>S</b></a>
-            <a class="button-size size-m" :class="{active: checkActive == 2}"  @click="chooseSizeM()"><b>M</b></a>
-            <a class="button-size size-l" :class="{active: checkActive == 3}" @click="chooseSizeL()"><b>L</b></a>
-            <a class="button-size size-xl" :class="{active: checkActive == 4}" @click="chooseSizeXL()"><b>XL</b></a>
+            <a
+              class="button-size size-s"
+              :class="{active: checkActive == 1 }"
+              @click="chooseSizeS()"
+            >
+              <b>S</b>
+            </a>
+            <a
+              class="button-size size-m"
+              :class="{active: checkActive == 2}"
+              @click="chooseSizeM()"
+            >
+              <b>M</b>
+            </a>
+            <a
+              class="button-size size-l"
+              :class="{active: checkActive == 3}"
+              @click="chooseSizeL()"
+            >
+              <b>L</b>
+            </a>
+            <a
+              class="button-size size-xl"
+              :class="{active: checkActive == 4}"
+              @click="chooseSizeXL()"
+            >
+              <b>XL</b>
+            </a>
           </div>
         </div>
         <div class="product-name">
@@ -104,8 +128,8 @@
             v-model="quantity"
           />
         </div>
-        <router-link tag="button" to="/product/01/cart" class="btn addcart btn-block">ADD TO CART</router-link>
-        <button type="button" class="btn buynow btn-block">BUY IT NOW</button>
+        <router-link tag="button" to="/product/01/cart" class="btn addcart btn-block" >ADD TO CART</router-link>
+        <button type="button" class="btn buynow btn-block" @click="addToCart()">BUY IT NOW</button>
         <div class="paypal">
           <img src="../../assets/images/safepay.png" alt />
         </div>
@@ -482,7 +506,8 @@
 <script>
 import Product from "./Product";
 import PageAverage from "./Average";
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+
+import { mapGetters, mapActions, mapMutations } from "vuex";
 export default {
   components: {
     Product,
@@ -491,41 +516,78 @@ export default {
   data() {
     return {
       quantity: 1,
-      checkActive: 1,
+      checkActive: 1
     };
   },
   methods: {
     ...mapMutations(["setPrice"]),
+    ...mapActions(["postDataCart"]),
+    addToCart () {
+      this.postDataCart();
+    },
     chooseSizeS() {
       this.checkActive = 1;
       let originSale = {
-        origin: this.getDataVariant[0].attributes.compare_at_price,
-        sale: this.getDataVariant[0].attributes.price
-      }
+        origin:
+          Math.round(
+            100 *
+              this.getDataVariant[0].attributes.compare_at_price *
+              this.quantity
+          ) / 100,
+        sale:
+          Math.round(
+            100 * this.getDataVariant[0].attributes.price * this.quantity
+          ) / 100
+      };
+      console.log(this.getDataVariant[0].attributes.product_id)
       this.setPrice(originSale);
     },
     chooseSizeM() {
       this.checkActive = 2;
       let originSale = {
-        origin: this.getDataVariant[1].attributes.compare_at_price,
-        sale: this.getDataVariant[1].attributes.price
-      }
+        origin:
+          Math.round(
+            100 *
+              this.getDataVariant[1].attributes.compare_at_price *
+              this.quantity
+          ) / 100,
+        sale:
+          Math.round(
+            100 * this.getDataVariant[1].attributes.price * this.quantity
+          ) / 100
+      };
       this.setPrice(originSale);
     },
     chooseSizeL() {
       this.checkActive = 3;
       let originSale = {
-        origin: this.getDataVariant[2].attributes.compare_at_price,
-        sale: this.getDataVariant[2].attributes.price
-      }
+        origin:
+          Math.round(
+            100 *
+              this.getDataVariant[2].attributes.compare_at_price *
+              this.quantity
+          ) / 100,
+        sale:
+          Math.round(
+            100 * this.getDataVariant[2].attributes.price * this.quantity
+          ) / 100
+      };
       this.setPrice(originSale);
     },
     chooseSizeXL() {
       this.checkActive = 4;
       let originSale = {
-        origin: this.getDataVariant[3].attributes.compare_at_price,
-        sale: this.getDataVariant[3].attributes.price
-      }
+        origin:
+          Math.round(
+            100 *
+              this.getDataVariant[3].attributes.compare_at_price *
+              this.quantity
+          ) / 100,
+        sale:
+          Math.round(
+            100 * this.getDataVariant[3].attributes.price * this.quantity
+          ) / 100
+      };
       this.setPrice(originSale);
     },
   },
@@ -538,11 +600,25 @@ export default {
     ]),
   },
   watch: {
-    originPrice: () => {
-      this.getOriginPrice;
-    },
-    salePrice: () => {
-      this.salePrice;
+    quantity: function(newValue) {
+      if(newValue <= 0){
+        this.quantity = 0;
+      }
+      switch(this.checkActive){
+        case 1: 
+         this.chooseSizeS();
+         break;
+        case 2: 
+         this.chooseSizeM();
+         break; 
+        case 3: 
+         this.chooseSizeL();
+         break;
+        case 4: 
+         this.chooseSizeXL();
+         break;  
+        default:      
+      }
     }
   }
 };
@@ -708,7 +784,6 @@ export default {
   grid-template-columns: 22% 22% 22% 22%;
   grid-column-gap: 3%;
   margin-bottom: 20px;
-  
 }
 .container .right-content .product-choose-size .button-size {
   padding: 3px 3px;

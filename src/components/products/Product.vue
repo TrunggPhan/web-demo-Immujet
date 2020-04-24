@@ -4,7 +4,7 @@
                class="product-item"
   >
     <div class="product-image">
-      <img src="../../assets/images/product8.jpg" alt />
+      <router-link to="/product/01" ><img src="../../assets/images/product8.jpg" alt /></router-link>
       <div class="save-price">
         <p>
           SAVE
