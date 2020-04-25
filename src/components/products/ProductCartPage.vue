@@ -1,32 +1,33 @@
 <template>
-  <div class="container">
+  <div class="container" v-if="isShownCart">
     <h1 class="cart-title">Your cart</h1>
     <div class="hr-large"></div>
     <div class="quantity-total">
       <div>QUANTITY</div>
       <div>TOTAL</div>
     </div>
-    <div class="cart-products">
+    <div class="cart-products" v-for="(item,index) in dataCart" :key="index">
       <div class="product-item">
         <div class="product-image">
           <img src="../../assets/images/product1.jpg" alt />
         </div>
         <div class="product-description">
           <a href="#">
-            <h1 class="product-name">Home Salon - Polygel Nail Master Kit</h1>
+            <h1 class="product-name">{{getDataAttributes.title}}</h1>
             <h1 class="product-name" style="color: #d54f4c;">ENJOY YOUR SAVINGS! :)</h1>
-            <p class="product-remove">Remove</p>
+            <p class="product-remove">Size</p>
           </a>
         </div>
       </div>
       <div class="cart-container">
         <div class="cart-number">
-          <input class="input-number" type="number" value="1" />
+          <!-- <input class="input-number" type="number" :value="item.attributes.quantity" /> -->
+          <p class="input-number">{{item.attributes.quantity}}</p>
         </div>
         <div class="cart-price-container">
           <div class="cart-price">
-            <div class="old-price">936.527,95 VND</div>
-            <div class="sale-price">655.686,95 VND</div>
+            <div class="old-price"></div>
+            <div class="sale-price">{{item.attributes.total}}$</div>
           </div>
         </div>
       </div>
@@ -43,12 +44,9 @@
           </div>
           <div class="money-total">
             <div class="old-total">
-              27.173.352,95
-              <br />VND
             </div>
             <div class="new-total">
-              19.023.339,95
-              <br />VND
+              {{getTotalPrice}}$
             </div>
           </div>
         </div>
@@ -70,10 +68,65 @@
 </template>
 
 <script>
-import Product from "../products/Product";
+import { mapGetters, mapActions, mapMutations } from "vuex";
+import Vue from 'vue'
+import axios from 'axios'
+import VueAxios from 'vue-axios'
+Vue.use(VueAxios, axios)
+
 export default {
-  components: {
-    Product
+  data() {
+    return {
+      dataCart: [],
+      isShownCart: false,
+    }
+  },
+  created() {
+    let url = "https://homentic.com/api/carts/"+this.getCartID+"/cart_items";
+    console.log(url);
+    axios
+    .get(url)
+    .then(response => {
+        console.log("response data Cart", response);
+        this.dataCart = response.data.data
+        console.log("this.dataCart", this.dataCart);
+        this.isShownCart = true;
+    })
+  },
+  methods: {
+    ...mapMutations(["setPrice", 
+                     "setFirstAddCart", 
+                     "setCartID", 
+                     "setCartItemInfo",
+                     "setShowCartPage",
+                     "setTotalPrice"]),
+    ...mapActions(["createDataCart"]),
+    getTotal() {
+      let total = 0;
+      for (let index = 0; index < this.dataCart.length; index++) {
+        total += Number(this.dataCart[index].attributes.total); 
+        console.log("total = ",total)
+      }
+      this.setTotalPrice(total)
+    }
+  },
+  computed: {
+    ...mapGetters([
+      "getDataAttributes",
+      "getDataVariant",
+      "getOriginPrice",
+      "getSalePrice",
+      "getFirstAddCart",
+      "getCartID",
+      "getCartItemInfo",
+      "isShown",
+      "getTotalPrice"
+    ]),
+  },
+  watch: {
+    dataCart: function(newValue) {
+      this.getTotal();
+    }
   }
 };
 </script>

@@ -61,9 +61,9 @@
               <li>
                 <a href="#">CATALOG</a>
               </li>
-              <li>
+              <router-link tag="li" to="/product/01/cart" class style="cursor: pointer;">
                 <a href="#">TRACK YOUR ORDER</a>
-              </li>
+              </router-link>
             </ul>
           </div>
           <div class="icon" @click="checkNavbarLeft = true">
@@ -73,7 +73,7 @@
           </div>
           <div class="icon" @click="checkNavbarLeft = true">
             <i class="fa fa-shopping-cart fa-icon" aria-hidden="true">
-              <i class="fa fa-circle fa-icon" aria-hidden="true"></i>
+              <i class="fa fa-circle fa-icon" aria-hidden="true" v-if="getTotalPrice != 0"></i>
             </i>
           </div>
         </div>
@@ -108,7 +108,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["getImgHeaderFlag"])
+    ...mapGetters(["getImgHeaderFlag", "getTotalPrice"])
   }
 };
 </script>

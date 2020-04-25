@@ -128,8 +128,12 @@
             v-model="quantity"
           />
         </div>
-        <router-link tag="button" to="/product/01/cart" class="btn addcart btn-block" >ADD TO CART</router-link>
-        <button type="button" class="btn buynow btn-block" @click="addToCart()">BUY IT NOW</button>
+        <router-link tag="button" 
+                     to="/product/01/cart" 
+                     class="btn addcart btn-block" 
+                    >
+                     ADD TO CART</router-link>
+        <button type="button" class="btn buynow btn-block">BUY IT NOW</button>
         <div class="paypal">
           <img src="../../assets/images/safepay.png" alt />
         </div>
@@ -506,8 +510,12 @@
 <script>
 import Product from "./Product";
 import PageAverage from "./Average";
-
 import { mapGetters, mapActions, mapMutations } from "vuex";
+import Vue from 'vue'
+import axios from 'axios'
+import VueAxios from 'vue-axios'
+Vue.use(VueAxios, axios)
+
 export default {
   components: {
     Product,
@@ -516,17 +524,109 @@ export default {
   data() {
     return {
       quantity: 1,
-      checkActive: 1
+      checkActive: 1,
+      variantId: "",
     };
   },
+  beforeRouteEnter (to, from, next) {
+    next();
+  },
+  beforeRouteLeave (to, from , next) {
+    this.addToCart();
+    setTimeout(() => {
+      next();
+    }, 2000)
+  },
   methods: {
-    ...mapMutations(["setPrice"]),
-    ...mapActions(["postDataCart"]),
+    ...mapMutations(["setPrice", 
+                     "setFirstAddCart", 
+                     "setCartID", 
+                     "setCartItemInfo"]),
+    ...mapActions(["createDataCart"]),
+
+    postDataCart() {
+      this.variantId = this.getDataVariant[this.checkActive - 1].id
+      let checkPatchDataCart = false;
+      if(this.getCartItemInfo.length != 0){
+        console.log("this.getCartItemInfo.length != 0 : ", this.getCartItemInfo)
+        this.getCartItemInfo.forEach(element => {
+          if(element.variantId == this.variantId){
+            const url = 'https://homentic.com/api/cart_items/'+ element.cartItemId;
+            let dataCart = {
+              data: {
+                type: 'cart_items',
+                attributes: {
+                    quantity: String(this.quantity)
+                }
+              }
+            };
+            axios.patch(url, dataCart)
+            .then(function (response){
+              console.log("axios.patch cart_item response = ",response)
+            })
+            .catch(e => {
+                console.log(e);
+            });
+            checkPatchDataCart = true;     
+            return 
+          }
+        });
+        if(checkPatchDataCart){
+          return;
+        }
+      }
+      let dataCart = {
+          data: {
+              type: 'cart_items',
+              attributes: {
+                  cart_id: this.getCartID,
+                  variant_id: this.variantId,
+                  quantity: String(this.quantity)
+              }
+          }
+      };
+      let main = this;  
+      axios.post('https://homentic.com/api/cart_items', dataCart)
+        .then(function (response) {  
+          console.log("response post cart_item = ",response)
+          let cartItemInfo = {
+            cartItemId: response.data.data.id,
+            variantId: response.data.data.attributes.variant_id
+          }
+          main.setCartItemInfo(cartItemInfo)
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    },
+
     addToCart () {
-      this.postDataCart();
+      let main = this
+      let checkFirst = main.getFirstAddCart;
+      if(!checkFirst){
+        let params = {
+          data : {
+              type: 'carts',
+          }
+        };
+        axios.post('https://homentic.com/api/carts', params)
+        .then(function (response) { 
+          let cart_id = response.data.data.id;
+          main.setCartID(cart_id);
+        })
+        .catch(e => {
+            console.log(e);
+        });
+        main.setFirstAddCart(true);
+        return;
+      }
+      else{
+        this.postDataCart();
+      }
     },
     chooseSizeS() {
       this.checkActive = 1;
+      this.variantId = this.getDataVariant[0].id
       let originSale = {
         origin:
           Math.round(
@@ -539,11 +639,11 @@ export default {
             100 * this.getDataVariant[0].attributes.price * this.quantity
           ) / 100
       };
-      console.log(this.getDataVariant[0].attributes.product_id)
       this.setPrice(originSale);
     },
     chooseSizeM() {
       this.checkActive = 2;
+      this.variantId = this.getDataVariant[1].id
       let originSale = {
         origin:
           Math.round(
@@ -560,6 +660,7 @@ export default {
     },
     chooseSizeL() {
       this.checkActive = 3;
+      this.variantId = this.getDataVariant[2].id
       let originSale = {
         origin:
           Math.round(
@@ -576,6 +677,7 @@ export default {
     },
     chooseSizeXL() {
       this.checkActive = 4;
+      this.variantId = this.getDataVariant[3].id
       let originSale = {
         origin:
           Math.round(
@@ -596,7 +698,11 @@ export default {
       "getDataAttributes",
       "getDataVariant",
       "getOriginPrice",
-      "getSalePrice"
+      "getSalePrice",
+      "getFirstAddCart",
+      "getCartID",
+      "getCartItemInfo",
+      "isShown"
     ]),
   },
   watch: {
@@ -619,6 +725,9 @@ export default {
          break;  
         default:      
       }
+    },
+    getCartID: function(newValue) {
+      this.postDataCart();
     }
   }
 };
@@ -791,11 +900,6 @@ export default {
   background-color: #ffffff;
   cursor: pointer;
 }
-/* .container .right-content .product-choose-size .button-size:focus {
-  background-color: #f3f3f3;
-  border: 1px solid #111111;
-  outline: none;
-} */
 .active {
   background-color: #f3f3f3 !important;
   border: 1px solid #111111 !important;

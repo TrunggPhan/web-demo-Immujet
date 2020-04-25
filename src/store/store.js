@@ -12,6 +12,11 @@ export const store = new Vuex.Store({
         dataVariant: [],
         originPrice: 49.95,
         salePrice: 99.95,
+        checkFirstAddCart: false,
+        cartId: "",
+        cartItemInfo: [],
+        isShownCartPage: false,
+        totalPrice: 0,
     },
     getters : {
         getImgHeaderFlag: state => {
@@ -28,6 +33,23 @@ export const store = new Vuex.Store({
         },
         getSalePrice: state => {
             return state.salePrice;
+        },
+        getFirstAddCart: state => {
+            return state.checkFirstAddCart;
+        },
+        getCartID: state => {
+            return state.cartId;
+        },
+        getCartItemInfo: state => {
+            console.log("getCartItemInfo called", state.cartItemInfo)
+            return state.cartItemInfo;
+        },
+        isShown: state => {
+            console.log("isShownCartPage called", state.isShownCartPage)
+            return state.isShownCartPage;
+        },
+        getTotalPrice: state => {
+            return state.totalPrice;
         }
     },
     mutations : {
@@ -41,6 +63,21 @@ export const store = new Vuex.Store({
         setPrice: (state, originSale) => {
             state.originPrice = originSale.origin;
             state.salePrice = originSale.sale;
+        },
+        setFirstAddCart: (state, flag) => {
+            state.checkFirstAddCart = flag;
+        },
+        setCartID: (state, cartID) => {     
+            state.cartId = cartID;
+        },
+        setCartItemInfo: (state, cartItemInfosetted) => {
+            state.cartItemInfo.push(cartItemInfosetted)
+        },
+        setShowCartPage: (state, isShown) => {
+            state.isShownCartPage = isShown;
+        },
+        setTotalPrice: (state, total) => {
+            state.totalPrice = Math.round(total*100)/100;
         }
     },
     actions : {
@@ -55,20 +92,6 @@ export const store = new Vuex.Store({
         setImgHeaderFlag ({commit}, flag) {
             commit('setImgHeaderFlag', flag)
         },
-        postDataCart ({commit},data ) {
-            axios.post('/cart', {
-                method: 'post',
-                url: 'https://homentic.com/api/carts',
-                data: {
-                    data : {
-                        type: 'carts'
-                    }
-                }
-
-              }).then(function (response) {
-                    console.log(response);
-        })
-        }
 
 
 
