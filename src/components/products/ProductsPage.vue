@@ -548,7 +548,6 @@ export default {
       this.variantId = this.getDataVariant[this.checkActive - 1].id
       let checkPatchDataCart = false;
       if(this.getCartItemInfo.length != 0){
-        console.log("this.getCartItemInfo.length != 0 : ", this.getCartItemInfo)
         this.getCartItemInfo.forEach(element => {
           if(element.variantId == this.variantId){
             const url = 'https://homentic.com/api/cart_items/'+ element.cartItemId;
@@ -562,7 +561,6 @@ export default {
             };
             axios.patch(url, dataCart)
             .then(function (response){
-              console.log("axios.patch cart_item response = ",response)
             })
             .catch(e => {
                 console.log(e);
@@ -588,7 +586,6 @@ export default {
       let main = this;  
       axios.post('https://homentic.com/api/cart_items', dataCart)
         .then(function (response) {  
-          console.log("response post cart_item = ",response)
           let cartItemInfo = {
             cartItemId: response.data.data.id,
             variantId: response.data.data.attributes.variant_id

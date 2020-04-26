@@ -21,8 +21,10 @@
       </div>
       <div class="cart-container">
         <div class="cart-number">
-          <!-- <input class="input-number" type="number" :value="item.attributes.quantity" /> -->
-          <p class="input-number">{{item.attributes.quantity}}</p>
+          <input class="input-number" 
+                 type="number" 
+                 :value="item.attributes.quantity"
+                 @input="changeQuantity(index, $event)"  />
         </div>
         <div class="cart-price-container">
           <div class="cart-price">
@@ -82,16 +84,7 @@ export default {
     }
   },
   created() {
-    let url = "https://homentic.com/api/carts/"+this.getCartID+"/cart_items";
-    console.log(url);
-    axios
-    .get(url)
-    .then(response => {
-        console.log("response data Cart", response);
-        this.dataCart = response.data.data
-        console.log("this.dataCart", this.dataCart);
-        this.isShownCart = true;
-    })
+    this.getDataCart();
   },
   methods: {
     ...mapMutations(["setPrice", 
@@ -101,14 +94,44 @@ export default {
                      "setShowCartPage",
                      "setTotalPrice"]),
     ...mapActions(["createDataCart"]),
+    getDataCart() {
+      let url = "https://homentic.com/api/carts/"+this.getCartID+"/cart_items";
+      axios
+      .get(url)
+      .then(response => {
+          console.log("response data Cart", response);
+          this.dataCart = response.data.data
+          console.log("this.dataCart", this.dataCart);
+          this.isShownCart = true;
+    })
+    },
     getTotal() {
       let total = 0;
       for (let index = 0; index < this.dataCart.length; index++) {
         total += Number(this.dataCart[index].attributes.total); 
-        console.log("total = ",total)
       }
       this.setTotalPrice(total)
-    }
+    },
+  changeQuantity(index, event){
+    console.log("value change: ", this.dataCart[index])
+    const url = 'https://homentic.com/api/cart_items/'+ this.dataCart[index].id
+    let dataCart = {
+          data: {
+            type: 'cart_items',
+            attributes: {
+                quantity: String(event.target.value)
+            }
+          }
+        };
+    let main = this;
+    axios.patch(url, dataCart)
+      .then(function (response){
+        main.getDataCart();
+      })
+      .catch(e => {
+          console.log(e);
+      });
+  },
   },
   computed: {
     ...mapGetters([
